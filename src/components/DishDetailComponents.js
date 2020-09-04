@@ -45,7 +45,7 @@ export default class DishDetailComponents extends Component {
                         <div key={com.id}>
                             <ul className="list-unstyled ">
                                 <li>{com.comment}</li>
-                                <li className=" blockquote-footer">{com.author},{com.date}</li>
+                                <li className=" blockquote-footer">{com.author},{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(com.date)))} </li>
                             </ul>
                         </div>)
                 });
@@ -64,16 +64,19 @@ export default class DishDetailComponents extends Component {
         const selected_dish = this.props.selected;
         return (
             <React.Fragment>
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
-                        {this.renderDish(selected_dish)}
-                    </div>
-                    <div className="col-12 col-md-5 m-1">
-                        <h4>Comments</h4>
-                        {this.renderComments(selected_dish)}
-                        
+                <div className="container">
+                    <div className="row">
+                        <div className="col-12 col-md-5 m-1">
+                            {this.renderDish(selected_dish)}
+                        </div>
+                        <div className="col-12 col-md-5 m-1">
+                            <h4>Comments</h4>
+                            {this.renderComments(selected_dish)}
+
+                        </div>
                     </div>
                 </div>
+
             </React.Fragment>
 
 
