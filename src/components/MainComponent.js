@@ -28,6 +28,8 @@ export default class MainComponent extends Component {
     onDishSelect(dishId) {
         this.setState({ selectedDish: dishId });
     }
+    
+   
 
     render() {
 
@@ -40,6 +42,13 @@ export default class MainComponent extends Component {
             );
         }
 
+        const DishWithId = ({match}) => {
+            return(
+                <DishDetailComponents selected={this.state.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]} 
+                  comments={this.state.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} />
+            );
+          };
+
         const check = this.state.selectedDish !== null ?
             <DishDetailComponents selected={this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0]} />
             :
@@ -50,6 +59,7 @@ export default class MainComponent extends Component {
                 <Header />
                 <Switch>
                     <Route path="/home" component={HomePage} />
+                    <Route path='/menu/:dishId' component={DishWithId} />
                     <Route exact path='/menu' component={() => <Menu dishes={this.state.dishes} onClick={(dishId) => this.onDishSelect(dishId)} />} />
                     <Route exact path='/contactus' component={Contact} />
                 </Switch>
