@@ -5,6 +5,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, Errors, LocalForm } from 'react-redux-form';
+import {Loading} from './LoadingComponent';
 
 
 function RenderDish({ dish }) {
@@ -50,35 +51,57 @@ function RenderComments({ comments, addComment, dishId  }) {
 }
 
 const DishDetailComponents = (props) => {
-
-    return (
-        <React.Fragment>
+    if(props.isLoading){
+        return(
             <div className="container">
                 <div className="row">
-                    <Breadcrumb>
-                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
-                        <BreadcrumbItem active>{props.selected.name}</BreadcrumbItem>
-                    </Breadcrumb>
-                    <div className="col-12">
-                        <h3>{props.selected.name}</h3>
-                        <hr />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
-                        <RenderDish dish={props.selected} />
-                    </div>
-                    <div className="col-12 col-md-5 m-1">
-                        <h4>Comments</h4>
-                        <RenderComments comments={props.comments}
-                        addComment = {props.addComment}
-                        dishId = {props.selected.id} />
-
-                    </div>
+                    <Loading/>
                 </div>
             </div>
-        </React.Fragment>
-    );
+        )
+    }
+    else if (props.errMess){
+        return(
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+
+        )
+    }
+    else if (props.selected!= null){
+        return (
+            <React.Fragment>
+                <div className="container">
+                    <div className="row">
+                        <Breadcrumb>
+                            <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>{props.selected.name}</BreadcrumbItem>
+                        </Breadcrumb>
+                        <div className="col-12">
+                            <h3>{props.selected.name}</h3>
+                            <hr />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12 col-md-5 m-1">
+                            <RenderDish dish={props.selected} />
+                        </div>
+                        <div className="col-12 col-md-5 m-1">
+                            <h4>Comments</h4>
+                            <RenderComments comments={props.comments}
+                            addComment = {props.addComment}
+                            dishId = {props.selected.id} />
+    
+                        </div>
+                    </div>
+                </div>
+            </React.Fragment>
+        );
+    }
+
+   
 }
 
 const required = (val) => val && val.length;
