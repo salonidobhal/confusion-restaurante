@@ -10,10 +10,11 @@ import Contact from './ContactComponent';
 import { connect } from 'react-redux';
 import { addComment, fetchDishes, fetchComments, fetchPromos, postComment } from '../redux/ActionCreators';
 import { actions } from 'react-redux-form';
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 
 const mapStateToProps = state => {
-    return{
+    return {
         dishes: state.dishes,
         comments: state.comments,
         promotions: state.promotions,
@@ -26,10 +27,10 @@ const mapDispatchToProps = dispatch => ({
     //    dispatch(addComment(dishId, rating, author, comment)),
     postComment: (dishId, rating, author, comment) =>
         dispatch(postComment(dishId, rating, author, comment)),
-     fetchDishes: () => {dispatch(fetchDishes())},
-     resetFeedbackForm: () => {dispatch(actions.reset('feedback'))}, //form will be called feedback
-     fetchComments: () => {dispatch(fetchComments())},
-     fetchPromos: () => {dispatch(fetchPromos())},
+    fetchDishes: () => { dispatch(fetchDishes()) },
+    resetFeedbackForm: () => { dispatch(actions.reset('feedback')) }, //form will be called feedback
+    fetchComments: () => { dispatch(fetchComments()) },
+    fetchPromos: () => { dispatch(fetchPromos()) },
 });
 
 
@@ -43,43 +44,43 @@ class MainComponent extends Component {
     /*onDishSelect(dishId) {
         this.setState({ selectedDish: dishId });
     }*/
-    componentDidMount(){
+    componentDidMount() {
         this.props.fetchDishes();
         this.props.fetchComments();
         this.props.fetchPromos();
     }
-   
+
 
     render() {
 
         const HomePage = () => {
             return (
                 <Home
-                   // dish={this.props.dishes.filter((dish) => dish.featured)[0]} //before redux and redux-thunk
-                   dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]} 
-                   dishesLoading= {this.props.dishes.isLoading}
-                   dishesErrMess = {this.props.dishes.errMess}
+                    // dish={this.props.dishes.filter((dish) => dish.featured)[0]} //before redux and redux-thunk
+                    dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+                    dishesLoading={this.props.dishes.isLoading}
+                    dishesErrMess={this.props.dishes.errMess}
 
-                   promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
-                   promosLoading={this.props.promotions.isLoading}
-                   promosErrMess={this.props.promotions.errMess}
+                    promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
+                    promosLoading={this.props.promotions.isLoading}
+                    promosErrMess={this.props.promotions.errMess}
                     leader={this.props.leaders.filter((leader) => leader.featured)[0]} />
             );
         }
 
-        const DishWithId = ({match}) => {
-            return(
-                <DishDetailComponents selected={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]}
-                isLoading= {this.props.dishes.isLoading}
-                errMess = {this.props.dishes.errMess}
- 
-                  comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} 
-                  errMess = {this.props.comments.errMess}
-                  //addComment = {this.props.addComment} />
-                  postComment = {this.props.postComment} />
+        const DishWithId = ({ match }) => {
+            return (
+                <DishDetailComponents selected={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
+                    isLoading={this.props.dishes.isLoading}
+                    errMess={this.props.dishes.errMess}
+
+                    comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+                    errMess={this.props.comments.errMess}
+                    //addComment = {this.props.addComment} />
+                    postComment={this.props.postComment} />
 
             );
-          };
+        };
 
         /*const check = this.state.selectedDish !== null ?
             <DishDetailComponents selected={this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0]} />
@@ -89,13 +90,17 @@ class MainComponent extends Component {
         return (
             <div>
                 <Header />
-                <Switch>
-                    <Route path="/home" component={HomePage} />
-                    <Route path='/menu/:dishId' component={DishWithId} />
-                    <Route exact path='/menu' component={() => <Menu dishes={this.props.dishes} onClick={(dishId) => this.onDishSelect(dishId)} />} />
-                    <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}/>} />
-                    <Route exact path='/aboutus' component={()=> <AboutUs leaders={this.props.leaders}/>} />
-                </Switch>
+                <TransitionGroup>
+                    <CSSTransition key={this.props.location.key} classNames="page" timeout={300}>
+                        <Switch>
+                            <Route path="/home" component={HomePage} />
+                            <Route path='/menu/:dishId' component={DishWithId} />
+                            <Route exact path='/menu' component={() => <Menu dishes={this.props.dishes} onClick={(dishId) => this.onDishSelect(dishId)} />} />
+                            <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
+                            <Route exact path='/aboutus' component={() => <AboutUs leaders={this.props.leaders} />} />
+                        </Switch>
+                    </CSSTransition>
+                </TransitionGroup>
                 <Footer />
             </div>
         );
