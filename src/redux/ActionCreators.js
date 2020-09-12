@@ -1,29 +1,46 @@
 import * as ActionTypes from './ActionTypes';
 import { DISHES } from '../shared/dishes';
 import { baseUrl } from '../shared/baseUrl';
-export const addComment = (dishId, rating, author, comment) =>({
+export const addComment = (dishId, rating, author, comment) => ({
     //returns a plain js object
     type: ActionTypes.ADD_COMMENT,
     payload: {
-        dishId : dishId,
-        rating :rating,
+        dishId: dishId,
+        rating: rating,
         author: author,
         comment: comment
     }
 });
 
-export const fetchDishes = ()=> (dispatch) => { //thunk that returns a function used to call or dispatch several actions
+export const fetchDishes = () => (dispatch) => { //thunk that returns a function used to call or dispatch several actions
     dispatch(dishesLoading(true));
 
     return fetch(baseUrl + 'dishes')
-    .then( response => response.json())
-    .then( dishes => dispatch(addDishes(dishes)));
+        .then(response => {
+            if (response.ok) {
+                return response;
+            }
+            else {
+                var error = new Error('Error ' + response.status + ':' + response.statusText);
+                error.response = response;
+                throw error;
+            }
+        },
+            error => {
+                var errmess = new Error(error.message);
+                throw errmess;
+            })
+        .then(response => response.json())
+        .then(dishes => dispatch(addDishes(dishes)))
+        .catch(error => {
+            dispatch(dishesFailed(error.message))
+        });
 
 
-   /* setTimeout(()=> {dispatch(addDishes(DISHES)) //this was put in order to simulate the server. now this 
-                                                    //is replced by actual communication            
-
-    }, 2000);*/
+    /* setTimeout(()=> {dispatch(addDishes(DISHES)) //this was put in order to simulate the server. now this 
+                                                     //is replced by actual communication            
+ 
+     }, 2000);*/
 }
 
 export const dishesLoading = () => ({ // the three methods below return an object
@@ -40,10 +57,27 @@ export const addDishes = (dishes) => ({
     payload: dishes
 });
 
-export const fetchComments = ()=> (dispatch) => { //thunk that returns a function used to call or dispatch several actions
+export const fetchComments = () => (dispatch) => { //thunk that returns a function used to call or dispatch several actions
     return fetch(baseUrl + 'comments')
-    .then( response => response.json())
-    .then( comments => dispatch(addComments(comments)));
+    .then(response => {
+        if (response.ok) {
+            return response;
+        }
+        else {
+            var error = new Error('Error ' + response.status + ':' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    },
+        error => {
+            var errmess = new Error(error.message);
+            throw errmess;
+        })
+        .then(response => response.json())
+        .then(comments => dispatch(addComments(comments)))
+        .catch(error => {
+            dispatch(commentsFailed(error.message))
+        });
 }
 
 export const commentsFailed = (errmess) => ({
@@ -56,12 +90,29 @@ export const addComments = (comments) => ({
     payload: comments
 });
 
-export const fetchPromos = ()=> (dispatch) => { //thunk that returns a function used to call or dispatch several actions
+export const fetchPromos = () => (dispatch) => { //thunk that returns a function used to call or dispatch several actions
     dispatch(promosLoading(true));
 
     return fetch(baseUrl + 'promotions')
-    .then( response => response.json())
-    .then( promos => dispatch(addPromos(promos)));
+    .then(response => {
+        if (response.ok) {
+            return response;
+        }
+        else {
+            var error = new Error('Error ' + response.status + ':' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    },
+        error => {
+            var errmess = new Error(error.message);
+            throw errmess;
+        })
+        .then(response => response.json())
+        .then(promos => dispatch(addPromos(promos)))
+        .catch(error => {
+            dispatch(promosFailed(error.message))
+        });
 }
 
 export const promosLoading = () => ({ // the three methods below return an object
