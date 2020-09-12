@@ -28,8 +28,8 @@ export const Comments = (state = {
                 return {...state,isLoading:false ,  errMess: action.payload, comments: [] } // state itself not mutated but another object is created and returned
             case ActionTypes.ADD_COMMENT:
                     var comment = action.payload;
-                    comment.id = state.comments.length;
-                    comment.date = new Date().toISOString();
+                    //comment.id = state.comments.length;
+                   // comment.date = new Date().toISOString();
                     console.log("Comment: "+ comment);
                     return {...state, comments: state.comments.concat(comment)};        
             default:

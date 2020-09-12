@@ -1,16 +1,57 @@
 import * as ActionTypes from './ActionTypes';
-import { DISHES } from '../shared/dishes';
+//import { DISHES } from '../shared/dishes';
 import { baseUrl } from '../shared/baseUrl';
-export const addComment = (dishId, rating, author, comment) => ({
+export const addComment = (/*dishId, rating, author, */comment) => ({
     //returns a plain js object
     type: ActionTypes.ADD_COMMENT,
-    payload: {
-        dishId: dishId,
-        rating: rating,
-        author: author,
-        comment: comment
-    }
+    payload: comment  ////after postComment method
+    /*{
+        dishId: dishId, //before postComment method
+        rating: rating,  //before postComment method
+        author: author,  //before postComment method
+        comment: comment  //before postComment method
+    }*/
 });
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+    const newComment = {
+        dishId: dishId,
+        rating: rating,  
+        author: author,  
+        comment: comment 
+
+    }
+    newComment.date = new Date().toISOString();
+
+    return fetch( baseUrl + 'comments', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response;
+        }
+        else {
+            var error = new Error('Error ' + response.status + ':' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    },
+        error => {
+            var errmess = new Error(error.message);
+            throw errmess;
+        })
+        .then(response => response.json())
+        .then(response => dispatch(addComment(response)))
+        .catch( error => {
+            console.log('Post Comments : '+ error.message);
+            alert("Your comment could not be posted\nError: "+ error.message);
+        });
+}
 
 export const fetchDishes = () => (dispatch) => { //thunk that returns a function used to call or dispatch several actions
     dispatch(dishesLoading(true));
