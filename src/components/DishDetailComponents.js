@@ -5,8 +5,9 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, Errors, LocalForm } from 'react-redux-form';
-import {Loading} from './LoadingComponent';
+import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransfrom, Stagger, Fade } from 'react-animation-components'
 
 
 function RenderDish({ dish }) {
@@ -17,52 +18,64 @@ function RenderDish({ dish }) {
         )
     }
     else {
+          
         return (
-            <Card>
-                <CardImg width="100%" src={ baseUrl + dish.image} alt={dish.name}>
-                </CardImg>
-                <CardBody>
-                    <CardTitle>{dish.name}</CardTitle>
-                    <CardText>{dish.description}</CardText>
-                </CardBody>
-            </Card>
+            <FadeTransfrom in
+            transformProps={{
+                exitTransform: 'scale(0.5) translateY(-50%'
+            }}>
+                <Card>
+                    <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name}>
+                    </CardImg>
+                    <CardBody>
+                        <CardTitle>{dish.name}</CardTitle>
+                        <CardText>{dish.description}</CardText>
+                    </CardBody>
+                </Card>
+                </FadeTransfrom>
+
+            
+
         );
     }
 }
 
-function RenderComments({ comments, postComment, dishId  }) {
+function RenderComments({ comments, postComment, dishId }) {
     var commentList;
     if (comments !== null) {
-        commentList = comments.map((com) => {
+        {commentList = comments.map((com) => {
             return (
                 <div key={com.id}>
+                  
                     <ul className="list-unstyled ">
-                        <li>{com.comment}</li>
-                        <li className=" blockquote-footer">{com.author},{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(com.date)))} </li>
-                    </ul>
+                    
+                                <li>{com.comment}</li>
+                                <li className=" blockquote-footer">{com.author},{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(com.date)))} </li>
+                                        
+                    </ul> 
                 </div>)
-        });
+        })}
     }
     return (
         <div>
             {commentList}
-            <CommentForm  dishId = {dishId} postComment= {postComment}/>
+            <CommentForm dishId={dishId} postComment={postComment} />
         </div>
     );
 }
 
 const DishDetailComponents = (props) => {
-    if(props.isLoading){
-        return(
+    if (props.isLoading) {
+        return (
             <div className="container">
                 <div className="row">
-                    <Loading/>
+                    <Loading />
                 </div>
             </div>
         )
     }
-    else if (props.errMess){
-        return(
+    else if (props.errMess) {
+        return (
             <div className="container">
                 <div className="row">
                     <h4>{props.errMess}</h4>
@@ -71,7 +84,7 @@ const DishDetailComponents = (props) => {
 
         )
     }
-    else if (props.selected!= null){
+    else if (props.selected != null) {
         return (
             <React.Fragment>
                 <div className="container">
@@ -92,9 +105,9 @@ const DishDetailComponents = (props) => {
                         <div className="col-12 col-md-5 m-1">
                             <h4>Comments</h4>
                             <RenderComments comments={props.comments}
-                            postComment = {props.postComment}
-                            dishId = {props.selected.id} />
-    
+                                postComment={props.postComment}
+                                dishId={props.selected.id} />
+
                         </div>
                     </div>
                 </div>
@@ -102,7 +115,7 @@ const DishDetailComponents = (props) => {
         );
     }
 
-   
+
 }
 
 const required = (val) => val && val.length;
